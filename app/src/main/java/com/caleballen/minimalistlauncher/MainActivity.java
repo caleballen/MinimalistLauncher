@@ -18,5 +18,11 @@ public class MainActivity extends AppCompatActivity {
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(this);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 }
