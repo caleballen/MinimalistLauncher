@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -17,9 +20,9 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
+    public static ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         public ConstraintLayout row;
         public TextView textView;
 
@@ -29,7 +32,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             row = (ConstraintLayout) itemView.findViewById(R.id.a_row);
             textView = (TextView) itemView.findViewById(R.id.text);
             itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
         }
+
 
         @Override
         public void onClick(View view){
@@ -39,6 +44,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appList.get(pos).packageName.toString());
             context.startActivity(launchIntent);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+            int pos = getAdapterPosition();
+            Context context = view.getContext();
+
+            menu.add(this.getAdapterPosition(),view.getId(),'0',"dab");
+        }
+
     }
 
     public RecyclerAdapter(Context context){
