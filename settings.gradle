@@ -1,0 +1,2 @@
+rootProject.name = "Minimalist Launcher"
+include ':app'
