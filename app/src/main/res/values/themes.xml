@@ -13,5 +13,6 @@
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@color/white</item>
     </style>
 </resources>
