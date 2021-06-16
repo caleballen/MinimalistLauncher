@@ -20,7 +20,7 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public static ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
+    public ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         public ConstraintLayout row;
@@ -57,25 +57,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public RecyclerAdapter(Context context){
 
-        PackageManager packageManager = context.getPackageManager();
-
-        Intent i = new Intent(Intent.ACTION_MAIN, null);
-        i.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        List<ResolveInfo> allApps = packageManager.queryIntentActivities(i, 0);
-        for(ResolveInfo resolveInfo: allApps){
-            AppInfo app = new AppInfo();
-            app.label = resolveInfo.loadLabel(packageManager);
-            app.packageName = resolveInfo.activityInfo.packageName;
-            app.icon = resolveInfo.activityInfo.loadIcon(packageManager);
-            appList.add(app);
-
-        }
-        Collections.sort(appList, new Comparator<AppInfo>() {
-            public int compare(AppInfo o1, AppInfo o2) {
-                return o1.label.toString().compareToIgnoreCase(o2.label.toString());
-            }
-        });
     }
 
     @Override
@@ -98,6 +79,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
+    }
+
+    public void addApp(AppInfo app){
+        appList.add(app);
+        Collections.sort(appList, new Comparator<AppInfo>() {
+            public int compare(AppInfo o1, AppInfo o2) {
+                return o1.label.toString().compareToIgnoreCase(o2.label.toString());
+            }
+        });
     }
 
 }
