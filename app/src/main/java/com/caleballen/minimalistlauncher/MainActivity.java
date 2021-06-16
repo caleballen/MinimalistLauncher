@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
             }
-        },28800000);
+        },3000);
     }
 
     @Override
