@@ -5,19 +5,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.ContextMenu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    ArrayList<AppInfo> lockedApps = new ArrayList<>();
 
     public RecyclerAdapter recyclerAdapter;
     @Override
@@ -43,9 +51,41 @@ public class MainActivity extends AppCompatActivity {
         recyclerAdapter.notifyDataSetChanged();
     }
 
+    public void lockApp(int app){
+        lockedApps.add(recyclerAdapter.appList.remove(app));
+        update();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerAdapter.addApp(lockedApps.remove(0));
+                update();
+            }
+        },3000);
+    }
+    public void lockAllApps(){
+        findViewById(R.id.RecyclerView).setVisibility(View.INVISIBLE);
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
+            }
+        },28800000);
+    }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Toast.makeText(this, item.getTitle() + " " + item.getGroupId(), Toast.LENGTH_SHORT).show();
+        switch (item.getItemId()){
+            case RecyclerAdapter.ContextMenuItems.LOCK:
+                Toast.makeText(this, item.getTitle() + " " + item.getGroupId(), Toast.LENGTH_SHORT).show();
+                lockApp(item.getGroupId());
+                break;
+            case RecyclerAdapter.ContextMenuItems.LOCK_ALL:
+                Toast.makeText(this, "Locking all apps", Toast.LENGTH_SHORT).show();
+                lockAllApps();
+                break;
+        }
 
         return super.onContextItemSelected(item);
     }

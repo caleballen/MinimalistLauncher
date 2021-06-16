@@ -21,6 +21,10 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     public ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
+    public class ContextMenuItems {
+        public static final int LOCK = 1;
+        public static final int LOCK_ALL = 2;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         public ConstraintLayout row;
@@ -49,8 +53,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
             int pos = getAdapterPosition();
             Context context = view.getContext();
-
-            menu.add(this.getAdapterPosition(),view.getId(),'0',"dab");
+            menu.add(this.getAdapterPosition(),ContextMenuItems.LOCK,'0',"Lock app");
+            menu.add(this.getAdapterPosition(),ContextMenuItems.LOCK_ALL,'0',"Lock all apps");
         }
 
     }
