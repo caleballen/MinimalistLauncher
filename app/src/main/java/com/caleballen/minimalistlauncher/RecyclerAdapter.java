@@ -23,7 +23,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
     public class ContextMenuItems {
         public static final int LOCK = 1;
-        public static final int LOCK_ALL = 2;
+        public static final int UNLOCK_ALL = 2;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
@@ -54,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             int pos = getAdapterPosition();
             Context context = view.getContext();
             menu.add(this.getAdapterPosition(),ContextMenuItems.LOCK,'0',"Lock app");
-            menu.add(this.getAdapterPosition(),ContextMenuItems.LOCK_ALL,'0',"Lock all apps");
+            menu.add(this.getAdapterPosition(),ContextMenuItems.UNLOCK_ALL,'0',"Unlock all apps");
         }
 
     }

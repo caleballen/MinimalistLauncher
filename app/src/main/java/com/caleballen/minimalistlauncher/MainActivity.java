@@ -1,26 +1,21 @@
 package com.caleballen.minimalistlauncher;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.ContextMenu;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,26 +47,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void lockApp(int app){
+        String appName = recyclerAdapter.appList.get(app).packageName.toString();
         lockedApps.add(recyclerAdapter.appList.remove(app));
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(appName, true);
+        Log.d("sharedPref", "put" + appName);
+        editor.apply();
+
         update();
-
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                recyclerAdapter.addApp(lockedApps.remove(0));
-                update();
-            }
-        },3000);
     }
-    public void lockAllApps(){
-        findViewById(R.id.RecyclerView).setVisibility(View.INVISIBLE);
+    public void unlockAllApps(){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.apply();
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
-            }
-        },3000);
+        update();
     }
 
     @Override
@@ -81,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, item.getTitle() + " " + item.getGroupId(), Toast.LENGTH_SHORT).show();
                 lockApp(item.getGroupId());
                 break;
-            case RecyclerAdapter.ContextMenuItems.LOCK_ALL:
-                Toast.makeText(this, "Locking all apps", Toast.LENGTH_SHORT).show();
-                lockAllApps();
+            case RecyclerAdapter.ContextMenuItems.UNLOCK_ALL:
+                Toast.makeText(this, "Unlocking all apps", Toast.LENGTH_SHORT).show();
+                unlockAllApps();
                 break;
         }
 
@@ -97,13 +90,20 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(Intent.ACTION_MAIN, null);
             i.addCategory(Intent.CATEGORY_LAUNCHER);
 
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
             List<ResolveInfo> allApps = packageManager.queryIntentActivities(i, 0);
             for(ResolveInfo resolveInfo: allApps){
                 AppInfo app = new AppInfo();
                 app.label = resolveInfo.loadLabel(packageManager);
                 app.packageName = resolveInfo.activityInfo.packageName;
                 app.icon = resolveInfo.activityInfo.loadIcon(packageManager);
-                recyclerAdapter.addApp(app);
+
+                boolean isLocked = sharedPref.getBoolean(resolveInfo.activityInfo.packageName,false);
+
+                if(!isLocked) {
+                    recyclerAdapter.addApp(app);
+                }
             }
 
             return "Success";
